@@ -8,6 +8,7 @@ import theme from './src/theme';
 import { SignIn } from '@screens/SignIn';
 import { StatusBar } from 'expo-status-bar';
 import { AuthProvider } from '@hooks/auth';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -20,15 +21,17 @@ export default function App() {
   }
   
   return (
-    <ThemeProvider theme={theme}>
-      <StatusBar
-        backgroundColor="transparent"
-        style="light"
-        translucent
-      />
-      <AuthProvider>
-        <SignIn />
-      </AuthProvider>
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider theme={theme}>
+        <StatusBar
+          backgroundColor="transparent"
+          style="light"
+          translucent
+        />
+        <AuthProvider>
+          <SignIn />
+        </AuthProvider>
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }
