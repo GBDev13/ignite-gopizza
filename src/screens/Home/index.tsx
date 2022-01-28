@@ -20,11 +20,13 @@ import {
 import { useTheme } from 'styled-components/native';
 import { Search } from '@components/Search';
 import { ProductCard, ProductProps } from '@components/ProductCard';
+import { useAuth } from '@hooks/auth';
 
 export function Home() {
   const [pizzas, setPizzas] = useState<ProductProps[]>([]);
   const [search, setSearch] = useState('');
 
+  const { user, signOut } = useAuth();
   const { COLORS } = useTheme();
   const navigation = useNavigation();
 
@@ -62,7 +64,8 @@ export function Home() {
   }, []));
 
   function handleOpen(id: string) {
-    navigation.navigate("product", { id });
+    const route = user?.isAdmin ? 'product' : 'order';
+    navigation.navigate(route, { id });
   }
 
   function handleAdd() {
@@ -77,7 +80,7 @@ export function Home() {
           <GreetingText>Olá, Admin</GreetingText>
         </Greeting>
         
-        <TouchableOpacity>
+        <TouchableOpacity onPress={signOut}>
           <MaterialIcons name="logout" color={COLORS.TITLE} size={24}/>
         </TouchableOpacity>
       </Header>
@@ -91,7 +94,7 @@ export function Home() {
 
       <MenuHeader>
         <Title>Cardápio</Title>
-        <MenuItemsNumber>10 pizzas</MenuItemsNumber>
+        <MenuItemsNumber>{pizzas.length ?? 0} pizzas</MenuItemsNumber>
       </MenuHeader>
 
       <FlatList
@@ -111,11 +114,13 @@ export function Home() {
         }}
       />
 
-      <NewProductButton
-        title="Cadastrar Pizza"
-        type="secondary"
-        onPress={handleAdd}
-      />
+      {user?.isAdmin && (
+        <NewProductButton
+          title="Cadastrar Pizza"
+          type="secondary"
+          onPress={handleAdd}
+        />
+      )}
     </Container>
   )
 }
